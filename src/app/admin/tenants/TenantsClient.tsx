@@ -7,10 +7,24 @@ import type { Tenant } from '@/types'
 
 interface Props { tenants: Tenant[] }
 
-const blank = {
+interface TenantForm {
+  slug:            string
+  business_name:   string
+  logo_url:        string
+  primary_color:   string
+  secondary_color: string
+  accent_color:    string
+  font_family:     string
+  welcome_message: string
+  queue_prefix:    string
+  plan:            'free' | 'paid'
+  timezone:        string
+}
+
+const blank: TenantForm = {
   slug: '', business_name: '', logo_url: '', primary_color: '#1d4ed8',
   secondary_color: '#ffffff', accent_color: '#f59e0b', font_family: 'DM Sans',
-  welcome_message: '', queue_prefix: 'A', plan: 'free' as const, timezone: 'Asia/Manila',
+  welcome_message: '', queue_prefix: 'A', plan: 'free', timezone: 'Asia/Manila',
 }
 
 export default function TenantsClient({ tenants: initial }: Props) {
@@ -18,11 +32,11 @@ export default function TenantsClient({ tenants: initial }: Props) {
   const [tenants, setTenants]   = useState(initial)
   const [showForm, setShowForm] = useState(false)
   const [editing, setEditing]   = useState<string | null>(null)
-  const [form, setForm]         = useState(blank)
+  const [form, setForm]         = useState<TenantForm>(blank)
   const [loading, setLoading]   = useState(false)
   const [error, setError]       = useState<string | null>(null)
 
-  function field(key: keyof typeof blank) {
+  function field(key: keyof TenantForm) {
     return (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) =>
       setForm(f => ({ ...f, [key]: e.target.value }))
   }
@@ -34,11 +48,17 @@ export default function TenantsClient({ tenants: initial }: Props) {
   function openEdit(t: Tenant) {
     setEditing(t.id)
     setForm({
-      slug: t.slug, business_name: t.business_name, logo_url: t.logo_url ?? '',
-      primary_color: t.primary_color, secondary_color: t.secondary_color,
-      accent_color: t.accent_color, font_family: t.font_family,
-      welcome_message: t.welcome_message ?? '', queue_prefix: t.queue_prefix,
-      plan: t.plan as 'free' | 'paid', timezone: t.timezone,
+      slug:            t.slug,
+      business_name:   t.business_name,
+      logo_url:        t.logo_url ?? '',
+      primary_color:   t.primary_color,
+      secondary_color: t.secondary_color,
+      accent_color:    t.accent_color,
+      font_family:     t.font_family,
+      welcome_message: t.welcome_message ?? '',
+      queue_prefix:    t.queue_prefix,
+      plan:            t.plan === 'paid' ? 'paid' : 'free',
+      timezone:        t.timezone,
     })
     setShowForm(true)
   }
