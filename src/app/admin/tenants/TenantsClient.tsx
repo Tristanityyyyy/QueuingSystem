@@ -38,7 +38,7 @@ export default function TenantsClient({ tenants: initial }: Props) {
       primary_color: t.primary_color, secondary_color: t.secondary_color,
       accent_color: t.accent_color, font_family: t.font_family,
       welcome_message: t.welcome_message ?? '', queue_prefix: t.queue_prefix,
-      plan: t.plan, timezone: t.timezone,
+      plan: t.plan as 'free' | 'paid', timezone: t.timezone,
     })
     setShowForm(true)
   }
